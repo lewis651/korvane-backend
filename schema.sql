@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS contact_messages (
 
 -- Index for fast tracking lookups
 CREATE INDEX IF NOT EXISTS idx_shipments_tracking_number ON shipments(tracking_number);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_shipments_tracking_number_ci ON shipments(LOWER(tracking_number));
 
 -- Chat Messages
 CREATE TABLE IF NOT EXISTS chat_messages (

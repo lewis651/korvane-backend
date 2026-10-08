@@ -9,7 +9,15 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+if (!process.env.DATABASE_URL) {
+  console.error('DATABASE_URL is required to run database migrations.');
+  process.exit(1);
+}
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false },
+});
 
 async function migrate() {
   try {
@@ -19,6 +27,7 @@ async function migrate() {
     console.log('✅ Database schema created successfully!');
   } catch (err) {
     console.error('Migration error:', err);
+    process.exitCode = 1;
   } finally {
     await pool.end();
   }
